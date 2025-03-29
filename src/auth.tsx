@@ -1,9 +1,9 @@
-import * as React from 'react';
+import * as React from "react";
 
-import { sleep } from './utils';
-import { queryOptions, useQuery, useQueryClient } from '@tanstack/react-query';
+import { queryOptions, useQuery, useQueryClient } from "@tanstack/react-query";
+import { sleep } from "./utils";
 
-export type Permission = 'READ_INVOICES';
+export type Permission = "READ_INVOICES";
 
 interface User {
   name: string;
@@ -21,19 +21,19 @@ export interface AuthContext {
 
 const AuthContext = React.createContext<AuthContext | null>(null);
 
-const key = 'tanstack.auth.user';
+const key = "tanstack.auth.user";
 
 const users: Record<string, User | undefined> = {
   admin: {
-    name: 'Administrator',
-    permissions: ['READ_INVOICES'],
+    name: "Administrator",
+    permissions: ["READ_INVOICES"],
   },
   accountant: {
-    name: 'Accountant',
-    permissions: ['READ_INVOICES'],
+    name: "Accountant",
+    permissions: ["READ_INVOICES"],
   },
   employee: {
-    name: 'Employee',
+    name: "Employee",
     permissions: [],
   },
 };
@@ -51,22 +51,25 @@ function setStoredUser(user: string | null) {
 }
 
 const userQueryOptions = queryOptions({
-  queryKey: ['user'],
+  queryKey: ["user"],
   queryFn: async () => {
+    console.log("debug: fetching user...");
     await sleep(300);
     const userName = getStoredUser();
 
     if (!userName) {
-      throw Error('Unauthenticated');
+      throw Error("Unauthenticated");
     }
 
     const user = users[userName];
     if (!user) {
-      throw Error('Invalid Credentials');
+      throw Error("Invalid Credentials");
     }
 
     return user;
   },
+  retry: 1,
+  staleTime: 1000 * 60 * 60,
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -90,7 +93,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = React.useCallback(async () => {
     setStoredUser(null);
     queryClient.removeQueries({ queryKey: userQueryOptions.queryKey });
-    window.location.href = '/login';
+    window.location.reload();
   }, []);
 
   const login = React.useCallback(async (username: string) => {
@@ -108,14 +111,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return false;
       }
     },
-    [getUser]
+    [getUser],
   );
 
   const can = React.useCallback(
     (permission: Permission) => {
       return user?.permissions.includes(permission) ?? false;
     },
-    [user]
+    [user],
   );
 
   return (
@@ -130,7 +133,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 export function useAuth() {
   const context = React.useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 }

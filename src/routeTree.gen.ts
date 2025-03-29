@@ -11,19 +11,19 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as IndexImport } from './routes/index'
-import { Route as AuthImport } from './routes/_auth'
 import { Route as LoginImport } from './routes/login'
-import { Route as AuthDashboardImport } from './routes/_auth.dashboard'
+import { Route as AuthImport } from './routes/_auth'
+import { Route as IndexImport } from './routes/index'
 import { Route as AuthInvoicesImport } from './routes/_auth.invoices'
-import { Route as AuthInvoicesInvoiceIdImport } from './routes/_auth.invoices.$invoiceId'
+import { Route as AuthDashboardImport } from './routes/_auth.dashboard'
 import { Route as AuthInvoicesIndexImport } from './routes/_auth.invoices.index'
+import { Route as AuthInvoicesInvoiceIdImport } from './routes/_auth.invoices.$invoiceId'
 
 // Create/Update Routes
 
-const IndexRoute = IndexImport.update({
-  id: '/',
-  path: '/',
+const LoginRoute = LoginImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -32,16 +32,10 @@ const AuthRoute = AuthImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const LoginRoute = LoginImport.update({
-  id: '/login',
-  path: '/login',
+const IndexRoute = IndexImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRoute,
-} as any)
-
-const AuthDashboardRoute = AuthDashboardImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => AuthRoute,
 } as any)
 
 const AuthInvoicesRoute = AuthInvoicesImport.update({
@@ -50,15 +44,21 @@ const AuthInvoicesRoute = AuthInvoicesImport.update({
   getParentRoute: () => AuthRoute,
 } as any)
 
-const AuthInvoicesInvoiceIdRoute = AuthInvoicesInvoiceIdImport.update({
-  id: '/$invoiceId',
-  path: '/$invoiceId',
-  getParentRoute: () => AuthInvoicesRoute,
+const AuthDashboardRoute = AuthDashboardImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthRoute,
 } as any)
 
 const AuthInvoicesIndexRoute = AuthInvoicesIndexImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AuthInvoicesRoute,
+} as any)
+
+const AuthInvoicesInvoiceIdRoute = AuthInvoicesInvoiceIdImport.update({
+  id: '/$invoiceId',
+  path: '/$invoiceId',
   getParentRoute: () => AuthInvoicesRoute,
 } as any)
 
